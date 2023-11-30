@@ -57,14 +57,16 @@ class MyWindow(Gtk.Window):
 
         file_tree = FileTree()
 
+        scroll = Gtk.ScrolledWindow()
+        scroll.add(file_tree)
+
         self.playlist = PlayList('play_list.m3u')
         self.listbox = Gtk.ListBox()
         for song in self.playlist.songs:
-            self.listbox.add(Gtk.Label(f"Title: {song}"))
-            # self.listbox.add(Gtk.Label(song))
+            self.listbox.add(Gtk.Label(song))
 
         paned = Gtk.Paned()
-        paned.pack1(file_tree, True, False)
+        paned.pack1(scroll, True, False)
         paned.pack2(self.listbox, True, False)
 
         grid.attach(toolbar, 0, 0, 1, 1)
