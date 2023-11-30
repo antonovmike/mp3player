@@ -65,7 +65,7 @@ class MyWindow(Gtk.Window):
         for song in self.playlist.songs:
             self.listbox.add(Gtk.Label(label=song))
 
-        paned = Gtk.Paned()
+        paned = Gtk.Paned(hexpand=True, vexpand=True)
         paned.pack1(scroll, True, False)
         paned.pack2(self.listbox, True, False)
 
