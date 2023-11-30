@@ -55,19 +55,14 @@ class MyWindow(Gtk.Window):
 
         file_tree = FileTree()
 
-        playlist = Gtk.TreeView()
-        playlist_store = Gtk.ListStore(str)
-        playlist.set_model(playlist_store)
-
-        playlist_column = Gtk.TreeViewColumn("Playlist", Gtk.CellRendererText(), text=0)
-        playlist.append_column(playlist_column)
-
-        for _ in range(5):
-            playlist_store.append([""])
+        self.playlist = PlayList('play_list.m3u')
+        self.listbox = Gtk.ListBox()
+        for song in self.playlist.songs:
+            self.listbox.add(Gtk.Label(song))
 
         paned = Gtk.Paned()
         paned.pack1(file_tree, True, False)
-        paned.pack2(playlist, True, False)
+        paned.pack2(self.listbox, True, False)
 
         grid.attach(toolbar, 0, 0, 1, 1)
         grid.attach(paned, 0, 1, 1, 1)
@@ -97,9 +92,7 @@ class FileTree(Gtk.TreeView):
         self.set_model(self.file_store)
 
         file_column = Gtk.TreeViewColumn("Files", Gtk.CellRendererText(), text=0)
-        file_path_column = Gtk.TreeViewColumn("Path", Gtk.CellRendererText(), text=1)
         self.append_column(file_column)
-        self.append_column(file_path_column)
 
         user = getpass.getuser()
         directory = f"/home/{user}/Music"
@@ -116,6 +109,22 @@ class FileTree(Gtk.TreeView):
                 self.add_directory(directory, item_path)
             else:
                 self.file_store.append(parent, [item, item_path])
+
+
+class PlayList:
+    def __init__(self, filename):
+        self.filename = filename
+        self.songs = self.read_play_list()
+
+    def read_play_list(self):
+        with open(self.filename) as f:
+            songs = f.readlines()
+        return [song.strip() for song in songs]
+
+    def update_playlist(self, playlist_store):
+        playlist_store.clear()
+        for song in self.songs:
+            playlist_store.append([""])
 
 
 win = MyWindow()
