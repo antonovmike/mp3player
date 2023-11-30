@@ -1,6 +1,8 @@
 import getpass
-import os
 import gi
+import m3u8
+import music_tag
+import os
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib
@@ -58,7 +60,8 @@ class MyWindow(Gtk.Window):
         self.playlist = PlayList('play_list.m3u')
         self.listbox = Gtk.ListBox()
         for song in self.playlist.songs:
-            self.listbox.add(Gtk.Label(song))
+            self.listbox.add(Gtk.Label(f"Title: {song}"))
+            # self.listbox.add(Gtk.Label(song))
 
         paned = Gtk.Paned()
         paned.pack1(file_tree, True, False)
@@ -117,9 +120,9 @@ class PlayList:
         self.songs = self.read_play_list()
 
     def read_play_list(self):
-        with open(self.filename) as f:
-            songs = f.readlines()
-        return [song.strip() for song in songs]
+        m3u8_obj = m3u8.load(self.filename)
+        songs = [song.title for song in m3u8_obj.segments]
+        return songs
 
     def update_playlist(self, playlist_store):
         playlist_store.clear()
